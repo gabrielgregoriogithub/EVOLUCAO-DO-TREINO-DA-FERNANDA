@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolução Academia — Fase 1 → Fase 2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f0f1a;
+    color: #e0e0f0;
+    padding: 24px 16px;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #a78bfa, #ec4899, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+  }
+
+  /* PHASE BADGES */
+  .phase-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .phase-badge {
+    padding: 10px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  .badge-f1 { background: #1e3a5f; color: #60a5fa; border: 2px solid #3b82f6; }
+  .badge-f2 { background: #3b1f4a; color: #c084fc; border: 2px solid #a855f7; }
+  .badge-arrow { color: #f97316; font-size: 1.4rem; display: flex; align-items: center; }
+
+  /* STATS OVERVIEW */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: #1a1a2e;
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid #2a2a45;
+  }
+  .stat-card .label { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .stat-card .f1-val { font-size: 1.1rem; color: #60a5fa; font-weight: 700; }
+  .stat-card .arrow { color: #f97316; font-size: 1rem; margin: 4px 0; }
+  .stat-card .f2-val { font-size: 1.25rem; color: #c084fc; font-weight: 800; }
+  .stat-card .diff { font-size: 0.75rem; color: #34d399; margin-top: 6px; font-weight: 600; }
+  .stat-card .diff.neg { color: #f87171; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 16px;
+    padding-left: 4px;
+    border-left: 3px solid #f97316;
+    padding-left: 10px;
+  }
+
+  /* TREINO BLOCKS */
+  .treinos-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 800px) {
+    .treinos-container { grid-template-columns: 1fr; }
+  }
+
+  .treino-block {
+    background: #1a1a2e;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #2a2a45;
+  }
+  .treino-header {
+    padding: 14px 18px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .treino-header.a-f1 { background: linear-gradient(90deg, #1e3a5f, #172554); color: #93c5fd; }
+  .treino-header.b-f1 { background: linear-gradient(90deg, #1e3a5f, #172554); color: #93c5fd; }
+  .treino-header.a-f2 { background: linear-gradient(90deg, #3b1f4a, #2d1b69); color: #d8b4fe; }
+  .treino-header.b-f2 { background: linear-gradient(90deg, #3b1f4a, #2d1b69); color: #d8b4fe; }
+
+  .treino-section { padding: 4px 0; }
+  .treino-section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b7280;
+    padding: 8px 18px 4px;
+  }
+
+  .exercise-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 7px 18px;
+    border-bottom: 1px solid #1f1f35;
+    gap: 8px;
+  }
+  .exercise-row:last-child { border-bottom: none; }
+  .exercise-row .ex-name {
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .exercise-row .ex-detail {
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .ex-detail.f1 { color: #60a5fa; }
+  .ex-detail.f2 { color: #c084fc; }
+  .ex-detail.improved { color: #34d399; }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    font-size: 0.83rem;
+  }
+  .compare-table thead tr {
+    background: #1a1a2e;
+  }
+  .compare-table th {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #9ca3af;
+    border-bottom: 2px solid #2a2a45;
+  }
+  .compare-table th.f1 { color: #60a5fa; }
+  .compare-table th.f2 { color: #c084fc; }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1f1f35;
+    vertical-align: middle;
+  }
+  .compare-table tr:hover td { background: #1e1e35; }
+  .compare-table .ex-col { color: #e2e8f0; font-weight: 600; }
+  .compare-table .f1-col { color: #60a5fa; }
+  .compare-table .f2-col { color: #c084fc; }
+  .compare-table .delta-col { font-weight: 700; }
+  .up { color: #34d399; }
+  .same { color: #facc15; }
+  .focus { color: #fb923c; }
+
+  /* PROGRESS BARS */
+  .progress-section { margin-bottom: 40px; }
+  .progress-item { margin-bottom: 18px; }
+  .progress-item .prog-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+  }
+  .progress-item .prog-name { color: #e2e8f0; font-weight: 600; }
+  .progress-item .prog-vals { color: #9ca3af; font-size: 0.75rem; }
+  .prog-bar-bg {
+    background: #1f1f35;
+    border-radius: 50px;
+    height: 10px;
+    position: relative;
+    overflow: visible;
+  }
+  .prog-bar-f1 {
+    height: 10px;
+    border-radius: 50px;
+    background: #3b82f6;
+    position: absolute;
+    top: 0; left: 0;
+    transition: width 1s;
+  }
+  .prog-bar-f2 {
+    height: 10px;
+    border-radius: 50px;
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    position: absolute;
+    top: 0; left: 0;
+    transition: width 1s;
+    opacity: 0.9;
+  }
+  .prog-bar-wrapper { position: relative; height: 10px; }
+
+  /* HIGHLIGHTS */
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .highlight-card {
+    background: #1a1a2e;
+    border-radius: 14px;
+    padding: 18px;
+    border-left: 4px solid;
+  }
+  .highlight-card.green { border-color: #34d399; }
+  .highlight-card.purple { border-color: #a855f7; }
+  .highlight-card.orange { border-color: #f97316; }
+  .highlight-card.blue { border-color: #3b82f6; }
+  .highlight-card .hl-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .highlight-card .hl-title { font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .highlight-card .hl-body { font-size: 0.88rem; color: #e2e8f0; line-height: 1.4; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    color: #4b5563;
+    font-size: 0.75rem;
+    padding-top: 20px;
+    border-top: 1px solid #1f1f35;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>EVOLUÇÃO DO TREINO DA FERNANDA 💪 ❤️</h1>
+  <p>Análise comparativa · Fase 1 → Fase 2</p>
+</div>
+
+<!-- PHASE LABELS -->
+<div class="phase-row">
+  <div style="text-align:center;">
+    <div class="phase-badge badge-f1">FASE 1 — Adaptação</div>
+    <div style="color:#60a5fa; font-size:0.78rem; font-weight:600; margin-top:6px; letter-spacing:1px;">Mar/Abr 2026</div>
+  </div>
+  <div class="badge-arrow">→</div>
+  <div style="text-align:center;">
+    <div class="phase-badge badge-f2">FASE 2 — Progressão</div>
+    <div style="color:#c084fc; font-size:0.78rem; font-weight:600; margin-top:6px; letter-spacing:1px;">Mai/Jun 2026</div>
+  </div>
+</div>
+
+<!-- HIGHLIGHTS -->
+<div class="section-title">Destaques da Evolução</div>
+<div class="highlights-grid">
+  <div class="highlight-card green">
+    <div class="hl-icon">🏆</div>
+    <div class="hl-title">Maior Ganho de Carga</div>
+    <div class="hl-body"><strong>Remada Baixa</strong><br>14kg → 40kg<br>+186% de progressão</div>
+  </div>
+  <div class="highlight-card purple">
+    <div class="hl-icon">📈</div>
+    <div class="hl-title">Aumento de Volume</div>
+    <div class="hl-body">Agachamento e Stiff<br>de <strong>3 séries para 4 séries</strong><br>maior estímulo muscular</div>
+  </div>
+  <div class="highlight-card orange">
+    <div class="hl-icon">🎯</div>
+    <div class="hl-title">Nova Divisão Push/Pull</div>
+    <div class="hl-body">Treino A = Push<br>Treino B = Pull<br>organização mais eficiente</div>
+  </div>
+  <div class="highlight-card blue">
+    <div class="hl-icon">🧠</div>
+    <div class="hl-title">Técnica antes de Carga</div>
+    <div class="hl-body">Supino com carga mais<br>controlada para<br><strong>foco na execução</strong></div>
+  </div>
+  <div class="highlight-card green">
+    <div class="hl-icon">💪</div>
+    <div class="hl-title">Novos Exercícios</div>
+    <div class="hl-body">Leg Press no Treino A<br>Desenvolvimento ombro<br>Panturrilha livre</div>
+  </div>
+  <div class="highlight-card orange">
+    <div class="hl-icon">⚡</div>
+    <div class="hl-title">Meta Agachamento</div>
+    <div class="hl-body">5kg → <strong>8-12kg</strong><br>ao longo das semanas<br>progressão gradual</div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section-title">Tabela Resumo — Exercícios-Chave</div>
+<table class="compare-table">
+  <thead>
+    <tr>
+      <th>Exercício</th>
+      <th class="f1">Fase 1</th>
+      <th class="f2">Fase 2</th>
+      <th>Delta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="ex-col">Agachamento</td><td class="f1-col">3×10 · 5kg</td><td class="f2-col">4×8-10 · 5→12kg</td><td class="delta-col up">↑ Carga + Série</td></tr>
+    <tr><td class="ex-col">Afundo</td><td class="f1-col">3×10 · 2kg</td><td class="f2-col">3×10 · 4kg</td><td class="delta-col up">↑ +2kg</td></tr>
+    <tr><td class="ex-col">Leg Press</td><td class="f1-col">3×12 · 25kg</td><td class="f2-col">4×10 · 30kg</td><td class="delta-col up">↑ +1 série, +5kg</td></tr>
+    <tr><td class="ex-col">Stiff</td><td class="f1-col">3×10-12 · 12kg halter</td><td class="f2-col">4×10 · 20kg barra</td><td class="delta-col up">↑ Carga + Série</td></tr>
+    <tr><td class="ex-col">Mesa Flexora</td><td class="f1-col">3×12 · 30kg</td><td class="f2-col">3×12 · 40kg</td><td class="delta-col up">↑ +10kg</td></tr>
+    <tr><td class="ex-col">Elevação Pélvica</td><td class="f1-col">3×10-12 · 5kg</td><td class="f2-col">4×10-12 · 15kg</td><td class="delta-col up">↑ +1 série, +10kg</td></tr>
+    <tr><td class="ex-col">Cadeira Abdutora</td><td class="f1-col">3×15 · 43/18kg</td><td class="f2-col">3×15 · 50/23kg</td><td class="delta-col up">↑ +7kg / +5kg</td></tr>
+    <tr><td class="ex-col">Supino</td><td class="f1-col">3×10 · 10kg</td><td class="f2-col">3×10 · 15kg</td><td class="delta-col up">↑ +5kg</td></tr>
+    <tr><td class="ex-col">Puxada</td><td class="f1-col">3×12 · 18kg</td><td class="f2-col">3×10-12 · 40kg</td><td class="delta-col up">↑↑ +122% carga</td></tr>
+    <tr><td class="ex-col">Remada Baixa</td><td class="f1-col">3×12 · 14kg</td><td class="f2-col">3×10-12 · 40kg</td><td class="delta-col up">↑↑ +186% carga</td></tr>
+    <tr><td class="ex-col">Face Pull</td><td class="f1-col">3×12 · 7kg</td><td class="f2-col">3×12-15 · 14kg</td><td class="delta-col up">↑ +7kg</td></tr>
+    <tr><td class="ex-col">Tríceps</td><td class="f1-col">3×12 · 7kg (corda)</td><td class="f2-col">3×10-12 · 14kg (direto)</td><td class="delta-col up">↑ +7kg</td></tr>
+    <tr><td class="ex-col">Rosca</td><td class="f1-col">3×12 · 7kg (martelo)</td><td class="f2-col">3×10-12 · 14kg (direta)</td><td class="delta-col up">↑ +7kg</td></tr>
+    <tr><td class="ex-col">Prancha</td><td class="f1-col">3×20-30s</td><td class="f2-col">3×50s</td><td class="delta-col up">↑ +20s</td></tr>
+    <tr><td class="ex-col">Cardio</td><td class="f1-col">Caminhada média 5 min</td><td class="f2-col">Caminhada média 15 min</td><td class="delta-col up">↑ +10 min</td></tr>
+  </tbody>
+</table>
+
+<!-- STATS OVERVIEW -->
+<div class="section-title">Visão Geral do Volume</div>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="label">Séries — Treino A</div>
+    <div class="f1-val">26 séries</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">30 séries</div>
+    <div class="diff">+4 séries (+15%)</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Séries — Treino B</div>
+    <div class="f1-val">30 séries</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">33 séries</div>
+    <div class="diff">+3 séries (+10%)</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Agachamento</div>
+    <div class="f1-val">3x10 · 5kg</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">4x8-10 · até 12kg</div>
+    <div class="diff">+1 série · até +140% carga</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Stiff</div>
+    <div class="f1-val">3x10 · 12kg halter</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">4x10 · 20kg barra</div>
+    <div class="diff">+1 série · +50% carga</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Puxada</div>
+    <div class="f1-val">3x12 · 18kg</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">3x10-12 · 40kg</div>
+    <div class="diff">+122% na carga</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Remada Baixa</div>
+    <div class="f1-val">3x12 · 14kg</div>
+    <div class="arrow">↓</div>
+    <div class="f2-val">3x10-12 · 40kg</div>
+    <div class="diff">+186% na carga</div>
+  </div>
+</div>
+
+<!-- TREINO A SIDE BY SIDE -->
+<div class="section-title">Treino A — Comparativo Completo</div>
+<div class="treinos-container">
+
+  <div class="treino-block">
+    <div class="treino-header a-f1">🔵 FASE 1 · Treino A — Quadríceps + Glúteos + Postura</div>
+
+    <div class="treino-section-label">🔥 Aquecimento</div>
+    <div class="exercise-row"><span class="ex-name">10 afundos + prancha toca ombro + 5 good mornings</span></div>
+
+    <div class="treino-section-label">🦵 Pernas</div>
+    <div class="exercise-row"><span class="ex-name">Agachamento livre</span><span class="ex-detail f1">3×10 · 5kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Afundo parado</span><span class="ex-detail f1">3×10 · 2kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Cadeira Abdutora</span><span class="ex-detail f1">3×15 · 43/18kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Stiff com halteres</span><span class="ex-detail f1">3×10-12 · 12kg</span></div>
+
+    <div class="treino-section-label">💪 Superior</div>
+    <div class="exercise-row"><span class="ex-name">Supino máquina/halter</span><span class="ex-detail f1">3×10 · 10kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Puxada neutra/articulada</span><span class="ex-detail f1">3×12 · 40kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Face Pull (corda na testa)</span><span class="ex-detail f1">3×12 · 7kg</span></div>
+
+    <div class="treino-section-label">🧠 Core</div>
+    <div class="exercise-row"><span class="ex-name">Abdominal crunch</span><span class="ex-detail f1">3×15</span></div>
+    <div class="exercise-row"><span class="ex-name">Elevação de pernas</span><span class="ex-detail f1">3×12</span></div>
+    <div class="exercise-row"><span class="ex-name">Lombar no banco</span><span class="ex-detail f1">3×12 c/lado</span></div>
+
+    <div class="treino-section-label">🚶 Cardio</div>
+    <div class="exercise-row"><span class="ex-name">Caminhada média</span><span class="ex-detail f1">5 min</span></div>
+  </div>
+
+  <div class="treino-block">
+    <div class="treino-header a-f2">🟣 FASE 2 · Treino A — Quadríceps + Glúteos + Push</div>
+
+    <div class="treino-section-label">🔥 Aquecimento</div>
+    <div class="exercise-row"><span class="ex-name">Caminhada + mobilidade quadril + 10 afundos + 10 good mornings</span></div>
+
+    <div class="treino-section-label">🦵 Pernas</div>
+    <div class="exercise-row"><span class="ex-name">Agachamento livre / Smith</span><span class="ex-detail improved">4×8-10 · 5→12kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Leg Press</span><span class="ex-detail improved">4×10 · 30kg (novo) ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Afundo</span><span class="ex-detail improved">3×10 · 4kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Panturrilha livre</span><span class="ex-detail improved">3×15 (novo) ↑</span></div>
+
+    <div class="treino-section-label">💪 Superior (Push)</div>
+    <div class="exercise-row"><span class="ex-name">Supino máquina/halter</span><span class="ex-detail improved">3×10 · 15kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Desenvolvimento ombro</span><span class="ex-detail improved">3×10 · 5kg (novo) ↑</span></div>
+
+    <div class="treino-section-label">🧠 Core</div>
+    <div class="exercise-row"><span class="ex-name">Prancha</span><span class="ex-detail improved">3×50s (novo)</span></div>
+    <div class="exercise-row"><span class="ex-name">Abdominal crunch</span><span class="ex-detail f2">3×15</span></div>
+
+    <div style="padding: 12px 18px; background: #1a2e1a; border-top: 1px solid #2a4a2a;">
+      <span style="color:#34d399; font-size:0.78rem; font-weight:700;">🚶 Caminhada média: 15 min</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- TREINO B SIDE BY SIDE -->
+<div class="section-title">Treino B — Comparativo Completo</div>
+<div class="treinos-container">
+
+  <div class="treino-block">
+    <div class="treino-header b-f1">🔵 FASE 1 · Treino B — Glúteos + Posterior + Costas</div>
+
+    <div class="treino-section-label">🔥 Aquecimento</div>
+    <div class="exercise-row"><span class="ex-name">10 afundos + 10 rotações quadril + 5 caminhada do urso</span></div>
+
+    <div class="treino-section-label">🦵 Pernas / Glúteos</div>
+    <div class="exercise-row"><span class="ex-name">Leg Press</span><span class="ex-detail f1">3×12 · 25kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Mesa Flexora</span><span class="ex-detail f1">3×12 · 30kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Elevação Pélvica</span><span class="ex-detail f1">3×10-12 · 5kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Panturrilha máquina</span><span class="ex-detail f1">3×12 · 5kg</span></div>
+
+    <div class="treino-section-label">💪 Superior</div>
+    <div class="exercise-row"><span class="ex-name">Puxada na polia</span><span class="ex-detail f1">3×12 · 18kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Remada baixa</span><span class="ex-detail f1">3×12 · 14kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Elevação lateral ombro</span><span class="ex-detail f1">3×12 · 3kg</span></div>
+
+    <div class="treino-section-label">💪 Braços</div>
+    <div class="exercise-row"><span class="ex-name">Tríceps corda</span><span class="ex-detail f1">3×12 · 7kg</span></div>
+    <div class="exercise-row"><span class="ex-name">Rosca martelo</span><span class="ex-detail f1">3×12 · 7kg</span></div>
+
+    <div class="treino-section-label">🧠 Core</div>
+    <div class="exercise-row"><span class="ex-name">Prancha</span><span class="ex-detail f1">3×20-30s</span></div>
+    <div class="exercise-row"><span class="ex-name">Canoinha</span><span class="ex-detail f1">3×</span></div>
+    <div class="exercise-row"><span class="ex-name">Abdominal lateral no banco</span><span class="ex-detail f1">3×12 c/lado</span></div>
+
+    <div class="treino-section-label">🚶 Cardio</div>
+    <div class="exercise-row"><span class="ex-name">Caminhada média</span><span class="ex-detail f1">5 min</span></div>
+  </div>
+
+  <div class="treino-block">
+    <div class="treino-header b-f2">🟣 FASE 2 · Treino B — Posterior + Glúteos + Pull</div>
+
+    <div class="treino-section-label">🔥 Aquecimento</div>
+    <div class="exercise-row"><span class="ex-name">Caminhada + mobilidade quadril + 10 agachamentos + 5 caminhada do urso</span></div>
+
+    <div class="treino-section-label">🦵 Pernas</div>
+    <div class="exercise-row"><span class="ex-name">Stiff com barra</span><span class="ex-detail improved">4×10 · 20kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Elevação Pélvica</span><span class="ex-detail improved">4×10-12 · 15kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Mesa Flexora</span><span class="ex-detail improved">3×12 · 40kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Cadeira Abdutora</span><span class="ex-detail improved">3×15 · 50/23kg ↑</span></div>
+
+    <div class="treino-section-label">💪 Costas e Braços (Pull)</div>
+    <div class="exercise-row"><span class="ex-name">Puxada alta</span><span class="ex-detail improved">3×10-12 · 40kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Remada baixa</span><span class="ex-detail improved">3×10-12 · 40kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Rosca direta</span><span class="ex-detail improved">3×10-12 · 14kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Tríceps direto</span><span class="ex-detail improved">3×10-12 · 14kg ↑</span></div>
+    <div class="exercise-row"><span class="ex-name">Face Pull</span><span class="ex-detail improved">3×12-15 · 14kg ↑</span></div>
+
+    <div class="treino-section-label">🧠 Core</div>
+    <div class="exercise-row"><span class="ex-name">Lombar</span><span class="ex-detail f2">3×12</span></div>
+    <div class="exercise-row"><span class="ex-name">Abdominal lateral</span><span class="ex-detail f2">3×12</span></div>
+
+    <div style="padding: 12px 18px; background: #1a2e1a; border-top: 1px solid #2a4a2a;">
+      <span style="color:#34d399; font-size:0.78rem; font-weight:700;">🚶 Caminhada média: 15 min</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- PROGRESS BARS -->
+<div class="progress-section">
+  <div class="section-title">Evolução de Carga por Exercício</div>
+
+  <div style="display:flex; gap:16px; margin-bottom:14px; font-size:0.75rem;">
+    <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:10px;background:#3b82f6;border-radius:3px;"></span>Fase 1</span>
+    <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:10px;background:linear-gradient(90deg,#a855f7,#ec4899);border-radius:3px;"></span>Fase 2</span>
+  </div>
+
+  <!-- Agachamento: F1=5kg, F2=12kg, max=15 -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Agachamento Livre</span><span class="prog-vals">5kg → 8-12kg</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:80%"></div>
+        <div class="prog-bar-f1" style="width:33%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stiff: F1=12kg halter, F2=18kg barra, max=25 -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Stiff</span><span class="prog-vals">12kg halter → 20kg barra</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:72%"></div>
+        <div class="prog-bar-f1" style="width:48%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Puxada: F1=18kg, F2=40kg, max=50 -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Puxada Alta</span><span class="prog-vals">18kg → 40kg</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:80%"></div>
+        <div class="prog-bar-f1" style="width:36%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remada: F1=14kg, F2=40kg, max=50 -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Remada Baixa</span><span class="prog-vals">14kg → 40kg</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:80%"></div>
+        <div class="prog-bar-f1" style="width:28%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supino: F1=7kg, F2=5kg -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Supino</span><span class="prog-vals">10kg → 15kg</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:33%"></div>
+        <div class="prog-bar-f1" style="width:46%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leg Press: F1=25kg, F2=20kg -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Leg Press</span><span class="prog-vals">25kg → 30kg</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:40%"></div>
+        <div class="prog-bar-f1" style="width:50%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prancha: F1=20-30s, F2=30-40s -->
+  <div class="progress-item">
+    <div class="prog-label"><span class="prog-name">Prancha (duração)</span><span class="prog-vals">20-30s → 50s</span></div>
+    <div class="prog-bar-bg">
+      <div class="prog-bar-wrapper">
+        <div class="prog-bar-f2" style="width:67%"></div>
+        <div class="prog-bar-f1" style="width:50%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Gerado em 26/06/2026 · Treino A + B · Fase 1 (Adaptação) → Fase 2 (Progressão)
+</div>
+
+</body>
+</html>
